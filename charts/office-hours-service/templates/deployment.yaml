@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.appname }}
+    version: {{ .Release.Name }}
+    component: {{ .Values.component }}
+    tag: {{ .Values.tag }}
+    circleId: {{ .Values.circleId }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+      version: {{ .Release.Name }}
+      component: {{ .Values.component }}
+      tag: {{ .Values.tag }}
+      circleId: {{ .Values.circleId | quote}}
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: '{{ .Values.istio.enabled }}'
+      labels:
+        app: {{ .Values.appname }}
+        version: {{ .Release.Name }}
+        component: {{ .Values.component }}
+        tag: {{ .Values.tag }}
+        circleId: {{ .Values.circleId }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name | default "default" }}
+      containers:
+        - name: {{ .Values.service.name }}
+          # image: "{{ .Values.image.registry }}/{{ .Values.image.application }}:{{-  .Values.image.tag | default $.Chart.AppVersion }}"
+          image: "{{-  .Values.image.tag | default $.Chart.AppVersion }}"
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+          {{- end }}
+          {{- if .Values.containerPort.enabled }}
+          ports:
+            - containerPort: {{ .Values.containerPort.port }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            httpGet:
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+              scheme: {{ .Values.livenessProbe.httpGet.scheme }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+            httpGet:
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+              scheme: {{ .Values.readinessProbe.httpGet.scheme }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.startcommand.enabled }}
+          command: {{ .Values.startcommand.value }}
+          {{- end }}
+          {{- if .Values.envVars }}
+          env:
+          {{ range $i, $var := .Values.envVars -}}
+          - name: {{ $var.name | upper}}
+            value: {{ $var.value | quote}}
+          {{ end }}
+          {{- end }}
+          {{- if .Values.volume.enabled }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          {{- end }}
+          {{- if .Values.configmaps.enabled }}
+          - name: {{ .Release.Name }}-data
+            mountPath: /data
+          {{- end }}
+          resources:
+  {{ toYaml .Values.resources | indent 12 }}
+  {{- if .Values.volume.enabled }}
+volumes:
+  - name: tmp
+    emptyDir: {}
+  {{- end }}
+  {{- with .Values.nodeSelector }}
+nodeSelector:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+affinity:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+tolerations:
+  {{- toYaml . | nindent 8 }}
+  {{- end }}

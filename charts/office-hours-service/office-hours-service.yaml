@@ -1,0 +1,105 @@
+appname: office-hours-service
+component: office-hours-service
+tag: tag
+circleId: "circleId"
+
+replicaCount: 1
+
+image:
+  tag: rossalli/office-hours-service:v1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "office-hours-service"
+  account: "service"
+
+podAnnotations: {}
+podSecurityContext: {}
+
+securityContext:
+  enabled: false
+  runAsUser: 1000
+
+service:
+  name: office-hours-service
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9080
+
+ingress:
+  enabled: false
+
+configmaps:
+  enabled: false
+startcommand:
+  enabled: false
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-service-nginx.conf\"]"
+
+containerPort:
+  enabled: true
+  port: 9080
+
+resources:
+  limits:
+    cpu: 256m
+    memory: 256Mi
+  requests:
+    cpu: 128m
+    memory: 128Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+envVars:
+  - name: LOG_DIR
+    value: "/tmp/logs"
+  - name: SERVER_ADDRESS
+    value: "localhost"
+  - name: SERVER_PORT
+    value: 8000
+  - name: DB_USER
+    value: "admin"
+  - name: DB_PASSWORD
+    value: "admin"
+  - name: DB_ADDRESS
+    value: "localhost"
+  - name: DB_PORT
+    value: 5432
+  - name: DB_NAME
+    value: "event-manager"
+  - name: DB_SSLMODE
+    value: "disable"
+
+volume:
+  enabled: true
+
+livenessProbe:
+  enabled: false
+  failureThreshold: 3
+  httpGet:
+    path: /v1/healthcheck
+    port: 9080
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /v1/healthcheck
+    port: 9080
+    scheme: HTTP
+  initialDelaySeconds: 30
+  periodSeconds: 20
+  successThreshold: 1
+  timeoutSeconds: 1
+
+istio:
+  enabled: true
