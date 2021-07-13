@@ -2,8 +2,10 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"github.com/monicaribeiro/event-manager/errs"
 	"log"
+	"os"
 
 	"github.com/go-pg/pg/v10"
 )
@@ -70,7 +72,15 @@ func (e EventRepositoryDb) Create(event *Event) *errs.AppError {
 }
 
 func NewEventRepositoryDb() EventRepositoryDb {
-	opt, err := pg.ParseURL("postgres://admin:admin@localhost:5432/event-manager?sslmode=disable")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbAddress := os.Getenv("DB_ADDRESS")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+	dbSslMode := os.Getenv("DB_SSLMODE")
+
+	datasource := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", dbUser, dbPassword, dbAddress, dbPort, dbName, dbSslMode)
+	opt, err := pg.ParseURL(datasource)
 
 	if err != nil {
 		panic(err)
