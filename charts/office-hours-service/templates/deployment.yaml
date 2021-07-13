@@ -87,9 +87,9 @@ spec:
           resources:
 {{ toYaml .Values.resources | indent 12 }}
   {{- if .Values.volume.enabled }}
-volumes:
-  - name: tmp
-    emptyDir: {}
+      volumes:
+        - name: tmp
+          emptyDir: {}
   {{- end }}
   {{- with .Values.nodeSelector }}
 nodeSelector:
