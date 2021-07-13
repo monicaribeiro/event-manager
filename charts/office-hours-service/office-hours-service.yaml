@@ -85,5 +85,5 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 
-istio:
+sidecarIstio:
   enabled: true
