@@ -14,9 +14,15 @@ type EventRepositoryDb struct {
 	db *pg.DB
 }
 
-func (e EventRepositoryDb) FindAll() ([]Event, *errs.AppError) {
+func (e EventRepositoryDb) FindAll(state string) ([]Event, *errs.AppError) {
 	var events []Event
-	err := e.db.Model(&events).Select()
+	var err error
+
+	if state == "" {
+		err = e.db.Model(&events).Select()
+	} else {
+		err = e.db.Model(&events). Where("state = ?", state).Select()
+	}
 
 	if err != nil {
 		if err == pg.ErrNoRows {

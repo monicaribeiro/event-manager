@@ -22,7 +22,8 @@ type EventHandlers struct {
 }
 
 func (eh *EventHandlers) getAllEvents(w http.ResponseWriter, r *http.Request) {
-	events, appError := eh.service.GetAllEvents()
+	state := r.URL.Query().Get("state")
+	events, appError := eh.service.GetAllEvents(state)
 
 	if appError != nil {
 		writeResponse(w, appError.Code, appError.AsMessage())

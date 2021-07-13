@@ -40,7 +40,7 @@ func NewEvent(name, city, state, photoUrl string, datetime time.Time) Event {
 }
 
 type EventRepository interface {
-	FindAll() ([]Event, *errs.AppError)
+	FindAll(state string) ([]Event, *errs.AppError)
 	Delete(int64) *errs.AppError
 	ById(int64) (*Event, *errs.AppError)
 	Create(*Event) *errs.AppError
