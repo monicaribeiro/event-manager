@@ -1,9 +1,12 @@
 package domain
 
-import "time"
+import (
+	"github.com/monicaribeiro/event-manager/errs"
+	"time"
+)
 
 type Event struct {
-	Id        int64 `pg:"event_id"`
+	Id        int64 `pg:"event_id,pk"`
 	Name      string
 	City      string
 	State     string
@@ -13,5 +16,7 @@ type Event struct {
 }
 
 type EventRepository interface {
-	FindAll() ([]Event, error)
+	FindAll() ([]Event, *errs.AppError)
+	Delete(int64) *errs.AppError
+	ById(int64) (*Event, *errs.AppError)
 }
