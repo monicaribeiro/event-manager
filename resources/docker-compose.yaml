@@ -3,6 +3,7 @@ version: '3'
 services:
   database:
     image: postgres:9.6-alpine
+    container_name: postgresql-event-manager
     ports:
       - 5432:5432
     environment:
@@ -11,4 +12,12 @@ services:
       - POSTGRES_PASSWORD=admin
       - MAX_CONNECTIONS=300
     volumes:
-      - .:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+volumes:
+    postgres-data:
+      driver: local
+
+networks:
+  app-network:
+    driver: bridge
