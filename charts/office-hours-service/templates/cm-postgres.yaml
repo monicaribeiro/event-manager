@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: office-hours-postgres
+  annotations:
+    "helm.sh/hook": "pre-install"
+data:
+  oh-init.sh: |
+    #!/bin/bash
+      psql -c "CREATE DATABASE event-manager"
+      psql -c "CREATE USER admin WITH PASSWORD 'admin'"
+      psql -c "ALTER DATABASE event-manager OWNER TO admin"
