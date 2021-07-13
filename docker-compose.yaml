@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=event-manager
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - MAX_CONNECTIONS=300
+    volumes:
+      - .:/var/lib/postgresql/data
