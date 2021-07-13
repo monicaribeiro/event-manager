@@ -1,4 +1,4 @@
-appname: office-hours-service
+appname: oh-service
 component: teste
 tag: test
 circleId: "teste"
@@ -16,7 +16,7 @@ fullnameOverride: ""
 serviceAccount:
   create: false
   annotations: {}
-  name: "office-hours-service"
+  name: "oh-service"
   account: "service"
 
 podAnnotations: {}
@@ -27,7 +27,7 @@ securityContext:
   runAsUser: 1000
 
 service:
-  name: office-hours-service
+  name: oh-service
   type: ClusterIP
   ports:
     - name: http
