@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Values.appname }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.appname }}
@@ -85,7 +85,7 @@ spec:
             mountPath: /data
           {{- end }}
           resources:
-  {{ toYaml .Values.resources | indent 12 }}
+{{ toYaml .Values.resources | indent 12 }}
   {{- if .Values.volume.enabled }}
 volumes:
   - name: tmp

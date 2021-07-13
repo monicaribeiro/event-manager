@@ -7,13 +7,14 @@ replicaCount: 1
 
 image:
   tag: rossalli/office-hours-service:v1
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
-  create: true
+  create: false
   annotations: {}
   name: "office-hours-service"
   account: "service"
