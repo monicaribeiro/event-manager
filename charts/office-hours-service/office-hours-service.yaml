@@ -63,7 +63,7 @@ envVars:
   - name: DB_PASSWORD
     value: "admin"
   - name: DB_ADDRESS
-    value: "localhost"
+    value: "my-release-postgresql"
   - name: DB_PORT
     value: 5432
   - name: DB_NAME
@@ -98,27 +98,3 @@ readinessProbe:
 
 istio:
   enabled: true
-
-postgresql:
-  # -- Enable PostgreSQL Installation
-  enabled: true
-  # -- PostgreSQL Service
-  fullnameOverride: office-hours-postgresql
-  # -- Name of InitDB Scripts - DO NOT CHANGE
-  initdbScriptsConfigMap: office-hours-postgres
-  # -- Postgres User
-  pguser: postgres
-  # -- Postgres Password
-  pgpassword: postgres
-  resources:
-    limits:
-      # -- Resource CPU Limit
-      cpu: 128m
-      # -- Resource Memory Limit
-      memory: 256Mi
-    requests:
-      # -- Resource CPU Requests
-      cpu: 128m
-      # -- Resource Memory Requests
-      memory: 128Mi
-
