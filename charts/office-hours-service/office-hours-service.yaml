@@ -62,7 +62,7 @@ envVars:
   - name: SERVER_ADDRESS
     value: "localhost"
   - name: SERVER_PORT
-    value: 8000
+    value: "8000"
   - name: DB_USER
     value: "admin"
   - name: DB_PASSWORD
@@ -70,7 +70,7 @@ envVars:
   - name: DB_ADDRESS
     value: "localhost"
   - name: DB_PORT
-    value: 5432
+    value: "5432"
   - name: DB_NAME
     value: "event-manager"
   - name: DB_SSLMODE
