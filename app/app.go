@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/monicaribeiro/event-manager/domain"
+	"github.com/monicaribeiro/event-manager/logger"
 	"github.com/monicaribeiro/event-manager/service"
 	"log"
 	"net/http"
@@ -23,7 +24,7 @@ func sanityCheck() {
 	}
 	for _, k := range envProps {
 		if os.Getenv(k) == "" {
-			log.Fatal(fmt.Sprintf("Environment variable %s not defined. Terminating application...", k))
+			logger.Fatal(fmt.Sprintf("Environment variable %s not defined. Terminating application...", k))
 		}
 	}
 }

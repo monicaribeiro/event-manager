@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/monicaribeiro/event-manager/errs"
-	"log"
+	"github.com/monicaribeiro/event-manager/logger"
 	"os"
 
 	"github.com/go-pg/pg/v10"
@@ -20,9 +20,10 @@ func (e EventRepositoryDb) FindAll() ([]Event, *errs.AppError) {
 
 	if err != nil {
 		if err == pg.ErrNoRows {
+			logger.Error("No event found.")
 			return nil, errs.NewNotFoundError("Events not found")
 		} else {
-			log.Println("Error while querying event table." + err.Error())
+			logger.Error("Error while querying event table." + err.Error())
 			return nil, errs.NewUnexpectedErrorError("Unexpected database error")
 		}
 	}
@@ -35,7 +36,7 @@ func (e EventRepositoryDb) Delete(id int64) *errs.AppError {
 	_, err := e.db.Model(event).WherePK().ForceDelete()
 
 	if err != nil {
-		log.Println("Error while deleting event." + err.Error())
+		logger.Error("Error while deleting event." + err.Error())
 		return errs.NewUnexpectedErrorError("Unexpected database error")
 	}
 
@@ -51,8 +52,7 @@ func (e EventRepositoryDb) ById(id int64) (*Event, *errs.AppError) {
 		if err == pg.ErrNoRows {
 			return nil, errs.NewNotFoundError("Event not found")
 		} else {
-			log.Println("Error while selecting event." + err.Error())
-			log.Printf("Id: %d\n", id)
+			logger.Error("Error while selecting event." + err.Error())
 			return nil, errs.NewUnexpectedErrorError("Unexpected database error")
 		}
 	}
@@ -64,7 +64,7 @@ func (e EventRepositoryDb) Create(event *Event) *errs.AppError {
 	_, err := e.db.Model(event).Insert()
 
 	if err != nil {
-		log.Println("Error while creating event." + err.Error())
+		logger.Error("Error while creating event." + err.Error())
 		return errs.NewUnexpectedErrorError("Unexpected database error")
 	}
 
