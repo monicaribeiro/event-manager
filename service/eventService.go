@@ -7,7 +7,7 @@ import (
 )
 
 type EventService interface {
-	GetAllEvents() ([]dto.EventResponse, *errs.AppError)
+	GetAllEvents(state string) ([]dto.EventResponse, *errs.AppError)
 	Delete(int642 int64) (*dto.EventResponse, *errs.AppError)
 	Create(request dto.NewEventRequest) *errs.AppError
 }
@@ -16,8 +16,8 @@ type DefaultEventService struct {
 	repo domain.EventRepository
 }
 
-func (s DefaultEventService) GetAllEvents() ([]dto.EventResponse, *errs.AppError) {
-	events, err := s.repo.FindAll()
+func (s DefaultEventService) GetAllEvents(state string) ([]dto.EventResponse, *errs.AppError) {
+	events, err := s.repo.FindAll(state)
 
 	if err != nil {
 		return nil, err
