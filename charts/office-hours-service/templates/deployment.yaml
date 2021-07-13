@@ -1,15 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  {{- if .Values.deploymentName }}
-  name: {{ .Values.deploymentName }}
-  {{- else }}
   name: {{ .Release.Name }}
-  {{- end }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Values.service.name }}
-    version: {{ .Release.name }}
+    app: {{ .Values.appname }}
+    version: {{ .Release.Name }}
     component: {{ .Values.component }}
     tag: {{ .Values.tag }}
     circleId: {{ .Values.circleId }}
@@ -17,71 +13,93 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Values.service.name }}
+      app: {{ .Values.appname }}
       version: {{ .Release.Name }}
       component: {{ .Values.component }}
       tag: {{ .Values.tag }}
-      circleId: {{ .Values.circleId }}
+      circleId: {{ .Values.circleId | quote}}
   template:
     metadata:
       annotations:
-        sidecar.istio.io/inject: '{{ .Values.sidecarIstio.enabled }}'
+        sidecar.istio.io/inject: '{{ .Values.istio.enabled }}'
       labels:
-        app: {{ .Values.service.name }}
+        app: {{ .Values.appname }}
         version: {{ .Release.Name }}
         component: {{ .Values.component }}
         tag: {{ .Values.tag }}
         circleId: {{ .Values.circleId }}
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name | default "default" }}
       containers:
         - name: {{ .Values.service.name }}
-          image: {{ .Values.image.tag }}
+          # image: "{{ .Values.image.registry }}/{{ .Values.image.application }}:{{-  .Values.image.tag | default $.Chart.AppVersion }}"
+          image: "{{-  .Values.image.tag | default $.Chart.AppVersion }}"
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.securityContext.runAsUser }}
+          {{- end }}
+          {{- if .Values.containerPort.enabled }}
+          ports:
+            - containerPort: {{ .Values.containerPort.port }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
             httpGet:
-              path: /health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 20
-            successThreshold: 1
-            timeoutSeconds: 1
+              path: {{ .Values.livenessProbe.httpGet.path }}
+              port: {{ .Values.livenessProbe.httpGet.port }}
+              scheme: {{ .Values.livenessProbe.httpGet.scheme }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
           readinessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
             httpGet:
-              path: /health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 20
-            successThreshold: 1
-            timeoutSeconds: 1
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.readinessProbe.httpGet.port }}
+              scheme: {{ .Values.readinessProbe.httpGet.scheme }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.startcommand.enabled }}
+          command: {{ .Values.startcommand.value }}
+          {{- end }}
+          {{- if .Values.envVars }}
           env:
           {{ range $i, $var := .Values.envVars -}}
           - name: {{ $var.name | upper}}
             value: {{ $var.value | quote}}
           {{ end }}
-          {{ range $i, $var := .Values.secretEnvVars -}}
-          - name: {{ $var.name | upper }}
-            valueFrom:
-              secretKeyRef:
-                name: {{ $var.secretName }}
-                key: {{ $var.secretKey }}
-          {{ end }}
+          {{- end }}
+          {{- if .Values.volume.enabled }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+          {{- end }}
+          {{- if .Values.configmaps.enabled }}
+          - name: {{ .Release.Name }}-data
+            mountPath: /data
+          {{- end }}
           resources:
   {{ toYaml .Values.resources | indent 12 }}
-imagePullSecrets:
-  - name: realwavelab-registry
+  {{- if .Values.volume.enabled }}
+volumes:
+  - name: tmp
+    emptyDir: {}
+  {{- end }}
   {{- with .Values.nodeSelector }}
 nodeSelector:
-  {{ toYaml . | indent 8 }}
-  {{- end }}
-  {{- with .Values.affinity }}
+  {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
 affinity:
-  {{ toYaml . | indent 8 }}
-  {{- end }}
-  {{- with .Values.tolerations }}
+  {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
 tolerations:
-  {{ toYaml . | indent 8 }}
-  {{- end }}
+  {{- toYaml . | nindent 8 }}
+    {{- end }}

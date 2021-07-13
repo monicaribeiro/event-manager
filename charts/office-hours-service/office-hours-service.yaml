@@ -1,6 +1,6 @@
 appname: office-hours-service
 component: teste
-tag: teste
+tag: test
 circleId: "teste"
 
 replicaCount: 1
@@ -39,7 +39,7 @@ configmaps:
   enabled: false
 startcommand:
   enabled: false
-  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-service-nginx.conf\"]"
 
 containerPort:
   enabled: true
@@ -59,6 +59,22 @@ affinity: {}
 envVars:
   - name: LOG_DIR
     value: "/tmp/logs"
+  - name: SERVER_ADDRESS
+    value: "localhost"
+  - name: SERVER_PORT
+    value: 8000
+  - name: DB_USER
+    value: "admin"
+  - name: DB_PASSWORD
+    value: "admin"
+  - name: DB_ADDRESS
+    value: "localhost"
+  - name: DB_PORT
+    value: 5432
+  - name: DB_NAME
+    value: "event-manager"
+  - name: DB_SSLMODE
+    value: "disable"
 
 volume:
   enabled: true
@@ -85,5 +101,5 @@ readinessProbe:
   successThreshold: 1
   timeoutSeconds: 1
 
-sidecarIstio:
+istio:
   enabled: true
