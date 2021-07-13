@@ -1,4 +1,4 @@
-name: office-hours-service
+appname: office-hours-service
 component: teste
 tag: teste
 circleId: "teste"
@@ -39,7 +39,7 @@ configmaps:
   enabled: false
 startcommand:
   enabled: false
-  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-service-nginx.conf\"]"
+  value: "[\"/bin/sh\",\"-c\",\"/usr/sbin/nginx -c /data/darwin-ui-nginx.conf\"]"
 
 containerPort:
   enabled: true
