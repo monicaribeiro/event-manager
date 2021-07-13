@@ -13,12 +13,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-serviceAccount:
-  create: false
-  annotations: {}
-  name: "oh-service"
-  account: "service"
-
 podAnnotations: {}
 podSecurityContext: {}
 
