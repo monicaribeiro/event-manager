@@ -1,12 +1,15 @@
 package domain
 
+import "time"
+
 type Event struct {
-	Id            int
-	Name          string
-	City          string
-	State         string
-	photoUrl      string
-	eventDateTime string
+	Id        int64 `pg:"event_id"`
+	Name      string
+	City      string
+	State     string
+	PhotoUrl  string `pg:"photo_url"`
+	Datetime  time.Time
+	CreatedOn time.Time `pg:"created_on"`
 }
 
 type EventRepository interface {

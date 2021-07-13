@@ -11,7 +11,7 @@ import (
 func Start() {
 	router := mux.NewRouter()
 
-	eh := EventHandlers{service.NewEventService(domain.NewEventRepositoryStub())}
+	eh := EventHandlers{service.NewEventService(domain.NewEventRepositoryDb())}
 
 	router.HandleFunc("/events", eh.getAllEvents).Methods(http.MethodGet)
 
