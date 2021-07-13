@@ -14,6 +14,7 @@ func Start() {
 	eh := EventHandlers{service.NewEventService(domain.NewEventRepositoryDb())}
 
 	router.HandleFunc("/events", eh.getAllEvents).Methods(http.MethodGet)
+	router.HandleFunc("/events", eh.createEvent).Methods(http.MethodPost)
 	router.HandleFunc("/events/{event_id:[0-9]+}", eh.deleteEvent).Methods(http.MethodDelete)
 
 	log.Fatal(http.ListenAndServe("localhost:8000", router))

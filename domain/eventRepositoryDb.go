@@ -57,6 +57,18 @@ func (e EventRepositoryDb) ById(id int64) (*Event, *errs.AppError) {
 	return event, nil
 }
 
+func (e EventRepositoryDb) Create(event *Event) *errs.AppError {
+
+	_, err := e.db.Model(event).Insert()
+
+	if err != nil {
+		log.Println("Error while creating event." + err.Error())
+		return errs.NewUnexpectedErrorError("Unexpected database error")
+	}
+
+	return nil
+}
+
 func NewEventRepositoryDb() EventRepositoryDb {
 	opt, err := pg.ParseURL("postgres://admin:admin@localhost:5432/event-manager?sslmode=disable")
 
