@@ -29,7 +29,7 @@ spec:
         tag: {{ .Values.tag }}
         circleId: {{ .Values.circleId }}
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name | default "default" }}
+      serviceAccountName: "default"
       containers:
         - name: {{ .Values.service.name }}
           # image: "{{ .Values.image.registry }}/{{ .Values.image.application }}:{{-  .Values.image.tag | default $.Chart.AppVersion }}"
