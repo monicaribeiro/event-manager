@@ -1,7 +1,7 @@
-appname: office-hours-service
-component: office-hours-service
-tag: tag
-circleId: "circleId"
+name: office-hours-service
+component: teste
+tag: teste
+circleId: "teste"
 
 replicaCount: 1
 
