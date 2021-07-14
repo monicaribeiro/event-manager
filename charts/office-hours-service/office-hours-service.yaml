@@ -57,7 +57,7 @@ envVars:
   - name: SERVER_ADDRESS
     value: "localhost"
   - name: SERVER_PORT
-    value: 8000
+    value: 9080
   - name: DB_USER
     value: "admin"
   - name: DB_PASSWORD
