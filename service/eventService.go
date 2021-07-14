@@ -4,6 +4,7 @@ import (
 	"github.com/monicaribeiro/event-manager/domain"
 	"github.com/monicaribeiro/event-manager/dto"
 	"github.com/monicaribeiro/event-manager/errs"
+	"github.com/monicaribeiro/event-manager/logger"
 )
 
 type EventService interface {
@@ -17,6 +18,8 @@ type DefaultEventService struct {
 }
 
 func (s DefaultEventService) GetAllEvents() ([]dto.EventResponse, *errs.AppError) {
+	logger.Info("V1 Getting all events")
+
 	events, err := s.repo.FindAll()
 
 	if err != nil {
@@ -31,6 +34,8 @@ func (s DefaultEventService) GetAllEvents() ([]dto.EventResponse, *errs.AppError
 }
 
 func (s DefaultEventService) Delete(id int64) (*dto.EventResponse, *errs.AppError) {
+	logger.Info("V1 Deleting event")
+
 	event, err := s.repo.ById(id)
 
 	if err != nil {
@@ -48,6 +53,8 @@ func (s DefaultEventService) Delete(id int64) (*dto.EventResponse, *errs.AppErro
 }
 
 func (s DefaultEventService) Create(request dto.NewEventRequest) *errs.AppError {
+	logger.Info("V1 Creating event")
+
 	event := domain.NewEvent(request.Name, request.City, request.State, request.PhotoUrl, request.Datetime)
 	err := s.repo.Create(&event)
 
