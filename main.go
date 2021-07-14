@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	logger.Info("Starting application...")
+	logger.Info("V1 Starting application...")
 	app.Start()
 }
