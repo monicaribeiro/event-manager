@@ -17,6 +17,8 @@ RUN go build -o ./out/event-manager .
 
 FROM alpine:3.12.0
 
+COPY --from=builder /app/event-manager/out/event-manager .
+
 EXPOSE 8080
 
 ENTRYPOINT ["./event-manager"]
