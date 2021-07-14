@@ -29,7 +29,6 @@ spec:
         tag: {{ .Values.tag }}
         circleId: {{ .Values.circleId }}
     spec:
-      serviceAccountName: "default"
       containers:
         - name: {{ .Values.service.name }}
           # image: "{{ .Values.image.registry }}/{{ .Values.image.application }}:{{-  .Values.image.tag | default $.Chart.AppVersion }}"
@@ -40,6 +39,7 @@ spec:
           {{- end }}
           {{- if .Values.containerPort.enabled }}
           ports:
+            - containerPort: {{ .Values.containerPort.port }}
             - containerPort: {{ .Values.containerPort.port }}
           {{- end }}
           {{- if .Values.livenessProbe.enabled }}
